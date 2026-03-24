@@ -29,9 +29,7 @@ const Header = ({ }: HeaderProps) => {
     }
 
     return <header className="flex justify-between items-center p-2 border-b border-[#bdc3c7]">
-        <p className="font-bold">
-            {STATICS.APP_TITLE}
-        </p>
+        <p className="font-bold">{STATICS.APP_TITLE}</p>
         {
             isLoggedIn
                 ? <button onClick={onLogoutClickHandler} title="logout" className="cursor-pointer"><IoMdLogOut size={20} /></button>
