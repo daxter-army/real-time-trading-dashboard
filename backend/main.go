@@ -15,8 +15,12 @@ func main() {
 	godotenv.Load()
 	PORT := os.Getenv("PORT")
 
-	// routes
-	http.HandleFunc("/tickers", controller.GetTickers)
+	// http routes
+	http.HandleFunc("/tickers/get", controller.GetTickers)
+	http.HandleFunc("/history/get", controller.GetHistory)
+
+	// websocket routes
+	http.HandleFunc("/ws/tickers/get", controller.GetLiveTickers)
 
 	log.Println("server running on port:", PORT)
 	http.ListenAndServe(":"+PORT, nil)
