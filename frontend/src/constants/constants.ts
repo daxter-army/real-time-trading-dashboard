@@ -18,7 +18,7 @@ export const CHART_TYPE_CANDLE = "candlestick"
 export const STATICS = {
     CLOSING_PRICE: "closing price",
     APP_TITLE: "My trading dashboard",
-    LOGIN_MANDATE: "To view dashboard you need to login"
+    LOGIN_MANDATE: "Please login to view dashboard"
 }
 
 export const LOCAL_STORAGE_KEYS = {
