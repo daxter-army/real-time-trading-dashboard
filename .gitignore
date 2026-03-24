@@ -1,5 +1,6 @@
 # BE related
 .env
+vendor
 
 # FE related
 logs
