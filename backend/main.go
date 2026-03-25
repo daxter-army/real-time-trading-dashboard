@@ -45,5 +45,5 @@ func main() {
 	handler := middlewareEnableCORS(mux)
 
 	log.Println("server running on port:", PORT)
-	log.Fatal(http.ListenAndServe(":"+PORT, handler))
+	log.Fatal(http.ListenAndServe("0.0.0.0:"+PORT, handler))
 }

@@ -1,5 +1,5 @@
-export const HTTP_BASE_PATH = `http://localhost:${import.meta.env.VITE_BACKEND_SERVER_PORT}`
-export const WS_BASE_PATH = `ws://localhost:${import.meta.env.VITE_BACKEND_SERVER_PORT}`
+export const HTTP_BASE_PATH = import.meta.env.VITE_BACKEND_HTTP_SERVER_URL
+export const WS_BASE_PATH = import.meta.env.VITE_BACKEND_WS_SERVER_URL
 
 export const API_SUB_PATHS = {
     STATIC_TICKERS: "/tickers/get",
