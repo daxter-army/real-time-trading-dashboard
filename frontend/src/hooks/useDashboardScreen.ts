@@ -24,7 +24,7 @@ const useDashboardScreen = (): useDashboardScreenProps => {
     // not on <App /> load, because we dont need this data on <LoginScreen />, save network bandwidth also, reduce load on the server etc
     const connectWS = useWSStore(state => state.connect)
     const wsConnection = useWSStore(state => state.socket)
-    const disconnectWS = useWSStore(state => state.connect)
+    const disconnectWS = useWSStore(state => state.disconnect)
 
     useEffect(() => {
         connectWS()
@@ -55,6 +55,7 @@ const useDashboardScreen = (): useDashboardScreenProps => {
             return newMap;
         })
 
+    const isTabVisible = useAppStore(state => state.isTabVisible)
     const selectedTicker = useAppStore(state => state.selectedTicker)
     const setSelectedTicker = useAppStore(state => state.setSelectedTicker)
 
@@ -66,6 +67,8 @@ const useDashboardScreen = (): useDashboardScreenProps => {
 
     // handler to update data on each message received from the websocket connection
     const onLiveTickerUpdateHandler = useCallback((event: MessageEvent) => {
+        if (!isTabVisible) return
+
         const message = JSON.parse(event.data);
 
         if (message.type !== WEBSOCKET_EVENTS.TICKER_UPDATE) return;
