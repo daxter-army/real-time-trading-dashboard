@@ -14,17 +14,17 @@ This is the overall architecture of the application
 | Zustand Store           |                    | /ws/tickers/get (Websocket server for our client app)     |
 | Websocket connection    |                    | StartLiveTickerConnection() (Websocket to Binance apis)   |
 +-------------------------+                    +-----------------------------------------------------------+
-            |                                                                          |
-            |-------------------------- GET /tickers/get ----------------------------->|
-            |-------------------------- WS ws/tickers/get ---------------------------->|
-            | (These both are fired instantly as soon as our Dashboard screen loads)   |---> Establish connection with Binance
-            |                                                                          |
-            |<------------------- JSON response for /tickers/get ----------------------|
-            |                                                                          |
-            |<------------------- WebSocket Connection establish ----------------------|
-            |<------------------------ Push ticker updates ----------------------------|
-            | These updates are consumed by our app and data is displayedon the Tickers|
-            | and on the graphs                                                        |
+            |                                                                           |
+            |-------------------------- GET /tickers/get ------------------------------>|
+            |-------------------------- WS ws/tickers/get ----------------------------->|
+            | (These both are fired instantly as soon as our Dashboard screen loads)    |---> Establish connection with Binance
+            |                                                                           |
+            |<------------------- JSON response for /tickers/get ---------------------- |
+            |                                                                           |
+            |<------------------- WebSocket Connection establish ---------------------- |
+            |<------------------------ Push ticker updates ---------------------------- |
+            | These updates are consumed by our app and data is displayed on the Tickers|
+            | and on the graphs                                                         |
 ```
 
 ### 🌠 Functionalities & features
