@@ -1,9 +1,15 @@
 package utils
 
-import "strings"
+import (
+	"math"
+	"strings"
+)
 
 const (
 	binancePrefix = "BINANCE"
+
+	TickerUpdateEventType = "ticker:update"
+	AlertTriggerEventType = "alert:trigger"
 )
 
 func NormalizeTickerName(t string) string {
