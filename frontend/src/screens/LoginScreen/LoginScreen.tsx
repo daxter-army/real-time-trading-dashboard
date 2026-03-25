@@ -1,7 +1,5 @@
 import { Navigate, useNavigate } from "react-router-dom";
 
-import Header from "@/components/Header/Header"
-
 import { useAuthStore } from "@/store/auth";
 
 import { APP_ROUTES, STATICS } from "@/constants/constants";
@@ -20,6 +18,7 @@ const LoginScreen = ({ }: LoginScreenProps) => {
 
     const onLoginClickHandler = () => {
         loginHandler()
+
         navigate(APP_ROUTES.DASHBOARD_SCREEN, {
             replace: true
         })
