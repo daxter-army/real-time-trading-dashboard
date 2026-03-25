@@ -65,7 +65,7 @@ This is the overall architecture of the application
 2. **Backend**: It is built with Golang and uses 2 external packages: `github.com/gorilla/websocket` and `github.com/joho/godotenv`. Please visit [`go.mod`](https://github.com/daxter-army/real-time-trading-dashboard/blob/main/backend/go.mod) for full list.
 
 ### 🔨 Project structure
-1. `backend` directory strcuture is like this:
+1. `backend` directory structure is like this:
 ```sh
 backend/
 ├── controller/
