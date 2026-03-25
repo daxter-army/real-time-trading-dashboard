@@ -14,7 +14,12 @@ type TickerHistoryDTO struct {
 	Volume float64 `json:"volume"`
 }
 
-type TickerWebSocketMessage struct {
+type WebsocketMessage struct {
+	Type string      `json:"type"`
+	Data interface{} `json:"data"`
+}
+
+type TickerMessage struct {
 	Data *struct {
 		S string `json:"s"`
 		P string `json:"p"`
