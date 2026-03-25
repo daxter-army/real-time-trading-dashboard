@@ -1,83 +1,33 @@
 import clsx from "clsx"
+import { useMemo } from "react"
 import Chart from "react-apexcharts"
-import { useEffect, useMemo, useState } from "react"
 import { MdOutlineShowChart, MdOutlineCandlestickChart } from "react-icons/md";
+
+import useVisualization from "@/hooks/useVisualization";
 
 import ChartLoader from "./ChartLoader";
 
 import {
     STATICS,
-    API_SUB_PATHS,
-    HTTP_BASE_PATH,
     CHART_TYPE_LINE,
-    POLLING_INTERVAL,
     HISTORY_PERIOD_1D,
     HISTORY_PERIOD_5D,
     CHART_TYPE_CANDLE,
-} from "../../constants/constants"
+} from "@/constants/constants"
 
 import type { VisualizationProps } from "./Visualization.props"
 
-const Visualization = ({ symbol }: VisualizationProps) => {
-    const [isTabVisible, setIsTabVisible] = useState(true)
-    const [chartData, setChartData] = useState<any[]>([])
-    const [chartError, setChartError] = useState(false)
-    const [chartIsLoading, setChartIsLoading] = useState(true)
-
-    const [chartType, setChartType] = useState(CHART_TYPE_LINE)
-
-    const [period, setPeriod] = useState(HISTORY_PERIOD_1D)
-
-    const fetchChartData = async (symbol: string, reflectLoading = false) => {
-        try {
-            if (reflectLoading) setChartIsLoading(true)
-
-            const params = new URLSearchParams({
-                symbol,
-                period
-            })
-
-            const apiData = await fetch(
-                HTTP_BASE_PATH + API_SUB_PATHS.PERIODIC_HISTORY + "?" + params
-            )
-
-            const parseApiData = await apiData.json()
-
-            setChartData(parseApiData)
-            setChartError(false)
-        } catch (err) {
-            console.error(err)
-            setChartError(true)
-        } finally {
-            if (reflectLoading) setChartIsLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        fetchChartData(symbol, true)
-    }, [symbol, period])
-
-    useEffect(() => {
-        if (period !== HISTORY_PERIOD_1D || !isTabVisible) return
-
-        const interval = setInterval(() => {
-            fetchChartData(symbol)
-        }, POLLING_INTERVAL)
-
-        return () => clearInterval(interval)
-    }, [symbol, period, isTabVisible])
-
-    useEffect(() => {
-        const handleVisibilityChange = () => {
-            setIsTabVisible(!document.hidden)
-        }
-
-        document.addEventListener("visibilitychange", handleVisibilityChange)
-
-        return () => {
-            document.removeEventListener("visibilitychange", handleVisibilityChange)
-        }
-    }, [])
+const Visualization = ({ }: VisualizationProps) => {
+    const {
+        chartData,
+        chartError,
+        chartType,
+        chartPeriod,
+        selectedTicker,
+        chartIsLoading,
+        onChartTypeClickHandler,
+        onChartPeriodClickHandler,
+    } = useVisualization()
 
     // Format series
     const lineSeries = useMemo(() => {
@@ -95,12 +45,10 @@ const Visualization = ({ symbol }: VisualizationProps) => {
     }, [chartData])
 
     // Compute axis range
-    const times = useMemo(() => {
-        return chartData.map(d => d.time)
-    }, [chartData])
+    const times = useMemo(() => chartData.map(d => d.time), [chartData])
 
+    // last point for annotation
     const lastPoint = lineSeries[lineSeries.length - 1]
-
     const options = useMemo(
         () => ({
             chart: {
@@ -167,32 +115,22 @@ const Visualization = ({ symbol }: VisualizationProps) => {
     )
 
     const series = useMemo(() => {
-        if (chartType === "candlestick") {
-            return [
+        return chartType === CHART_TYPE_CANDLE ?
+            [
                 {
                     name: "Price",
                     data: candleSeries
                 }
             ]
-        }
-
-        return [
-            {
-                name: "Price",
-                data: lineSeries
-            }
-        ]
+            : [
+                {
+                    name: "Price",
+                    data: lineSeries
+                }
+            ]
     }, [chartType, lineSeries, candleSeries, lastPoint])
 
     if (chartError) return <div>Error loading chart</div>
-
-    const onChartPeriodClickHandler = (dataPeriod: string) => {
-        setPeriod(dataPeriod)
-    }
-
-    const onChartTypeClickHandler = (toggledChartType: string) => {
-        setChartType(toggledChartType)
-    }
 
     const buttonClassNames = "cursor-pointer border border-[#95a5a6] rounded-sm px-1 hover:border-[#3498db]"
     const buttonActiveClassNames = "border-[#3498db] bg-[#3498db] text-white"
@@ -202,11 +140,11 @@ const Visualization = ({ symbol }: VisualizationProps) => {
             <div className="flex justify-between pl-4 pr-2">
                 <div className="flex gap-2 items-end">
                     <div className="flex gap-2">
-                        <button className={clsx(buttonClassNames, { [buttonActiveClassNames]: period === HISTORY_PERIOD_1D })} onClick={() => onChartPeriodClickHandler(HISTORY_PERIOD_1D)}>{HISTORY_PERIOD_1D}</button>
-                        <button className={clsx(buttonClassNames, { [buttonActiveClassNames]: period === HISTORY_PERIOD_5D })} onClick={() => onChartPeriodClickHandler(HISTORY_PERIOD_5D)}>{HISTORY_PERIOD_5D}</button>
+                        <button className={clsx(buttonClassNames, { [buttonActiveClassNames]: chartPeriod === HISTORY_PERIOD_1D })} onClick={() => onChartPeriodClickHandler(HISTORY_PERIOD_1D)}>{HISTORY_PERIOD_1D}</button>
+                        <button className={clsx(buttonClassNames, { [buttonActiveClassNames]: chartPeriod === HISTORY_PERIOD_5D })} onClick={() => onChartPeriodClickHandler(HISTORY_PERIOD_5D)}>{HISTORY_PERIOD_5D}</button>
                     </div>
-                    <span className="font-medium"><span className="font-bold">{symbol}</span> {STATICS.CLOSING_PRICE}</span>
-                    {period === HISTORY_PERIOD_1D && <div className="flex items-center gap-2">
+                    <span className="font-medium"><span className="font-bold">{selectedTicker}</span> {STATICS.CLOSING_PRICE}</span>
+                    {chartPeriod === HISTORY_PERIOD_1D && <div className="flex items-center gap-2">
                         <span className="relative flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
@@ -214,7 +152,6 @@ const Visualization = ({ symbol }: VisualizationProps) => {
                         <span className="text-sm font-medium text-green-600">Live</span>
                     </div>}
                 </div>
-
                 <div className="flex gap-2 ml-4">
                     <button
                         onClick={() => onChartTypeClickHandler(CHART_TYPE_LINE)}

@@ -1,3 +1,1 @@
-export type VisualizationProps = {
-    symbol: string
-}
+export type VisualizationProps = {}
