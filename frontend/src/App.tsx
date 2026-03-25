@@ -15,22 +15,6 @@ const LoginScreen = lazy(() => import('@/screens/LoginScreen/LoginScreen'));
 const DashboardScreen = lazy(() => import('@/screens/DashboardScreen/DashboardScreen'));
 
 function App() {
-  const setIsTabVisible = useAppStore(state => state.setIsTabVisible)
-
-  // subscription to check whether the tab is in focus or not
-  // to pause web socket updates
-  useEffect(() => {
-    const onVisibilityChangeHandler = () => {
-      setIsTabVisible(!document.hidden)
-    }
-
-    document.addEventListener("visibilitychange", onVisibilityChangeHandler)
-
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibilityChangeHandler)
-    }
-  }, [])
-
   return (
     <BrowserRouter>
       <Header />

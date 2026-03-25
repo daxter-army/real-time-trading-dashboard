@@ -21,7 +21,6 @@ type useVisualizationProps = {
 const useVisualization = (): useVisualizationProps => {
     const wsConnection = useWSStore(state => state.socket)
     const selectedTicker = useAppStore(state => state.selectedTicker)
-    const isTabVisible = useAppStore(state => state.isTabVisible)
 
     const [chartPeriod, setChartPeriod] = useState(HISTORY_PERIOD_1D)
     const [chartType, setChartType] = useState<"line" | "candlestick">(CHART_TYPE_LINE)
@@ -48,8 +47,6 @@ const useVisualization = (): useVisualizationProps => {
     }
 
     const onLiveTickerUpdateHandler = useCallback((event: MessageEvent) => {
-        if (!isTabVisible) return
-
         const message = JSON.parse(event.data)
         if (message.type !== WEBSOCKET_EVENTS.TICKER_UPDATE) return
 
@@ -91,7 +88,7 @@ const useVisualization = (): useVisualizationProps => {
         const sliced = data.slice(-totalNumberOfEntries)
 
         setData([...sliced])
-    }, [selectedTicker, data, setData, isTabVisible])
+    }, [selectedTicker, data, setData])
 
     // subscribe to live ticker updates
     useEffect(() => {
