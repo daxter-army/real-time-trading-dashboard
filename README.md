@@ -6,23 +6,23 @@ This dashboard allows you to view the latest prices of top cryptocurrencies in r
 ### 🏛️ App architecture
 This is the overall architecture of the application
 ```sh
-+-------------------------+      HTTP/WS      +-----------------------------------------------------------+
-|  React Frontend         | <---------------->|  Golang Backend                                           |
-|-------------------------|                   |-----------------------------------------------------------|
-| Login Screen            |                   | /tickers/get                                              |
-| Dashboard Screen        |                   | /history/get                                              |
-| Zustand Store           |                   | /ws/tickers/get (Websocket server for our client app)     |
-| Websocket connection    |                   | StartLiveTickerConnection() (Websocket to Binance apis)   |
-+-------------------------+                   +-----------------------------------------------------------+
++-------------------------+      HTTP/WS       +-----------------------------------------------------------+
+|  React Frontend         | <----------------> |  Golang Backend                                           |
+|-------------------------|                    |-----------------------------------------------------------|
+| Login Screen            |                    | /tickers/get                                              |
+| Dashboard Screen        |                    | /history/get                                              |
+| Zustand Store           |                    | /ws/tickers/get (Websocket server for our client app)     |
+| Websocket connection    |                    | StartLiveTickerConnection() (Websocket to Binance apis)   |
++-------------------------+                    +-----------------------------------------------------------+
             |                                                                          |
-            |--------------- GET /tickers/get ---------------------------------------->|
-            |--------------- WS ws/tickers/get --------------------------------------->|
+            |-------------------------- GET /tickers/get ----------------------------->|
+            |-------------------------- WS ws/tickers/get ---------------------------->|
             | (These both are fired instantly as soon as our Dashboard screen loads)   |---> Establish connection with Binance
             |                                                                          |
-            |<-------- JSON response for /tickers/get ---------------------------------|
+            |<------------------- JSON response for /tickers/get ----------------------|
             |                                                                          |
-            |<--------- WebSocket Connection establish --------------------------------|
-            |<------------- Push ticker updates ---------------------------------------|
+            |<------------------- WebSocket Connection establish ----------------------|
+            |<------------------------ Push ticker updates ----------------------------|
             | These updates are consumed by our app and data is displayedon the Tickers|
             | and on the graphs                                                        |
 ```
