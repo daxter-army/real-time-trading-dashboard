@@ -55,7 +55,7 @@ This is the overall architecture of the application
 1. A WebSocket connection between my frontend client and backend server.
 2. A WebSocket connection between my backend server and Binance's server.
 
-* However, there’s no need for bidirectional communication in either case. From the backend to Binance or from the frontend to the backend, we could have used SSE (Server-Sent events) instead of these WebSocket connections. But due to time constraints, api availability and websockets the requirement in the assignment, I decided to move ahead with Websockets for real-time communication.
+* However, there’s no need for bidirectional communication in either case. From the backend to Binance or from the frontend to the backend, we could have used SSE (Server-Sent events) instead of these WebSocket connections. But due to time constraints, api availability and Websockets as mentioned in requirements for the challenge, I decided to move ahead with Websockets for real-time communication.
 
 ### 🛠️ Tech stack and libraries
 * I have used the following tech stack
