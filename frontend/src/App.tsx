@@ -1,13 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Header from '@/components/Header/Header';
-import LoginScreen from '@/screens/LoginScreen/LoginScreen';
-import DashboardScreen from '@/screens/DashboardScreen/DashboardScreen';
 
 import { useAppStore } from '@/store/app';
 
 import { APP_ROUTES } from '@/constants/constants';
+import ScreenLoader from '@/components/Loaders/ScreenLoader/ScreenLoader';
+
+// lazy load routes
+const LoginScreen = lazy(() => import('@/screens/LoginScreen/LoginScreen'));
+const DashboardScreen = lazy(() => import('@/screens/DashboardScreen/DashboardScreen'));
 
 function App() {
   const setIsTabVisible = useAppStore(state => state.setIsTabVisible)
@@ -29,11 +32,13 @@ function App() {
   return (
     <BrowserRouter>
       <Header />
-      <Routes>
-        <Route path={APP_ROUTES.ROOT} element={<LoginScreen />} />
-        <Route path={APP_ROUTES.DASHBOARD_SCREEN} element={<DashboardScreen />} />
-        <Route path={APP_ROUTES.WILDCARD} element={<LoginScreen />} />
-      </Routes>
+      <Suspense fallback={<ScreenLoader />}>
+        <Routes>
+          <Route path={APP_ROUTES.ROOT} element={<LoginScreen />} />
+          <Route path={APP_ROUTES.DASHBOARD_SCREEN} element={<DashboardScreen />} />
+          <Route path={APP_ROUTES.WILDCARD} element={<LoginScreen />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

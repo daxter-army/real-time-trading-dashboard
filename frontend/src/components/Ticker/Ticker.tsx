@@ -1,8 +1,8 @@
 import clsx from "clsx"
 
 import Skeleton from "@/components/Skeleton/Skeleton"
+import TickerLoader from "@/components/Ticker/TickerLoader"
 
-import TickerLoader from "./TickerLoader"
 import type { TickerProps } from "./Ticker.props"
 
 const Ticker = ({ data, isLoading, onTickerClickHandler, selectedSymbol }: TickerProps) => {
