@@ -100,6 +100,13 @@ frontend/
 ```
 
 ### How to run this project locally?
+#### With `docker`
+##### Prerequisite
+For this step docker should be installed on your machine. I have prepared this this at docker version `29.3.0`
+##### Local setup
+1. Open terminal at project's base dir, and then hit `docker compose up --build`
+2. Open browser and navigate to `http://localhost:3000`, the app should be there to welcome you 🎉.
+
 #### Without `docker`
 ##### Prerequisite
 For this step Node.js 20.X and golang 1.25 should be installed on your machine.
@@ -112,10 +119,3 @@ For this step Node.js 20.X and golang 1.25 should be installed on your machine.
 6. In terminal 2, hit: `npm i && npm run dev`
 7. This will start our frontend app's server at **port:5173**
 8. Then navigate to `http://localhost:5173` and the app should be there to welcome you 🎉.
-
-#### With `docker`
-##### Prerequisite
-For this step docker should be installed on your machine. I have prepared this this at docker version `29.3.0`
-##### Local setup
-1. Open terminal at project's base dir, and then hit `docker compose up --build`
-2. Open browser and navigate to `http://localhost:3000`, the app should be there to welcome you 🎉.
