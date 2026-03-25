@@ -1,5 +1,5 @@
 import { Fragment, useEffect } from "react"
-import { Navigate, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import Ticker from "@/components/Ticker/Ticker"
 import Visualization from "@/components/Visualization/Visualization"

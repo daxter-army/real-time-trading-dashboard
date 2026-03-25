@@ -14,9 +14,11 @@ export const CHART_TYPE_LINE = "line"
 export const CHART_TYPE_CANDLE = "candlestick"
 
 export const STATICS = {
+    LOGIN: "login",
     CLOSING_PRICE: "closing price",
     APP_TITLE: "My trading dashboard",
-    LOGIN_MANDATE: "Please login to view dashboard"
+    LOGIN_MANDATE: "Please login to view dashboard",
+    ERROR_TITLE: "Error while loading! Please try again",
 }
 
 export const WEBSOCKET_EVENTS = {

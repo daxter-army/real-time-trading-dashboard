@@ -28,7 +28,12 @@ const LoginScreen = ({ }: LoginScreenProps) => {
         <div className="mt-8">
             <p>{STATICS.LOGIN_MANDATE}</p>
             <br />
-            <button className="bg-[#3498db] hover:bg-[#2980b9] text-white font-semibold rounded-sm py-1 px-3 cursor-pointer" onClick={onLoginClickHandler}>login</button>
+            <button
+                onClick={onLoginClickHandler}
+                className="bg-[#3498db] hover:bg-[#2980b9] text-white font-semibold rounded-sm py-1 px-3 cursor-pointer"
+            >
+                {STATICS.LOGIN}
+            </button>
         </div>
     </main>
 }
