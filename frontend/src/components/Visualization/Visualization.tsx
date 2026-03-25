@@ -142,6 +142,7 @@ const Visualization = ({ }: VisualizationProps) => {
                     key={chartType}
                     series={series}
                     type={chartType}
+                    // @ts-ignore
                     options={options}
                 />
             </div>
