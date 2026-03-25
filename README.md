@@ -102,7 +102,7 @@ frontend/
 ### How to run this project locally?
 #### With `docker`
 ##### Prerequisite
-For this step docker should be installed on your machine. I have prepared this this at docker version `29.3.0`
+For this step docker should be installed on your machine. I have prepared this at docker version `29.3.0`
 ##### Local setup
 1. Open terminal at project's base dir, and then hit `docker compose up --build`
 2. Open browser and navigate to `http://localhost:3000`, the app should be there to welcome you 🎉.
