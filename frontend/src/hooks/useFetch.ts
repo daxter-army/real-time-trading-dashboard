@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-const useFetch = <T = any>(url: string, defaultData: any, dataUpdateHandler: (result: any) => T | null, options?: RequestInit) => {
+const useFetch = <T = any>(url: string, defaultData: any = null, dataUpdateHandler: (result: any) => T | null, options?: RequestInit) => {
     const [data, setData] = useState<T | null>(defaultData);
     const [error, setError] = useState<Error | null>(null);
     const [loading, setLoading] = useState(true);
