@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"realtime-trading-be/controller"
+	"realtime-trading-be/store"
 )
 
 func middlewareEnableCORS(next http.Handler) http.Handler {
@@ -37,6 +38,13 @@ func main() {
 	// http routes
 	mux.HandleFunc("/tickers/get", controller.GetTickers)
 	mux.HandleFunc("/history/get", controller.GetHistory)
+
+	// starting the websocket connection to Binance's server
+	_, err := store.StartLiveTickerConnection()
+	if err != nil {
+		log.Println("[main] error while calling StartLiveTickerConnection():", err)
+		return
+	}
 
 	// websocket routes
 	mux.HandleFunc("/ws/tickers/get", controller.GetLiveTickers)

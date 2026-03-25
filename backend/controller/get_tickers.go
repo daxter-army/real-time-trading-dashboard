@@ -44,11 +44,16 @@ func GetLiveTickers(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	_, err = store.StartLiveTickerConnection()
-	if err != nil {
-		log.Println("[GetLiveTickers] error while calling StartLiveTickerConnection():", err)
-		return
-	}
+	// check client disconnects
+	go func() {
+		for {
+			if _, _, err := conn.ReadMessage(); err != nil {
+				log.Println("[GetLiveTickers] client disconnected:", err)
+				conn.Close()
+				return
+			}
+		}
+	}()
 
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
