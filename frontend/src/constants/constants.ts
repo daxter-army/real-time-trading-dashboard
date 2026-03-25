@@ -7,8 +7,6 @@ export const API_SUB_PATHS = {
     PERIODIC_HISTORY: "/history/get"
 }
 
-export const POLLING_INTERVAL = 2000
-
 export const HISTORY_PERIOD_1D = "1D"
 export const HISTORY_PERIOD_5D = "5D"
 
