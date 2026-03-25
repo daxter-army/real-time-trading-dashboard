@@ -1,70 +1,101 @@
 package store
 
 import (
-	"realtime-trading-be/domain"
+	"encoding/json"
+	"fmt"
+	"log"
+	"strings"
 	"sync"
+
+	"github.com/gorilla/websocket"
+
+	"realtime-trading-be/domain"
+	"realtime-trading-be/responses"
+	"realtime-trading-be/utils"
 )
 
-var Tickers = []string{
-	// Stocks
-	// "AAPL", "TSLA", "MSFT", "GOOGL", "AMZN",
-	// "META", "NVDA", "JPM", "V", "WMT",
-
-	// Crypto
-	"BINANCE:BTCUSDT", "BINANCE:ETHUSDT", "BINANCE:BNBUSDT",
-	"BINANCE:SOLUSDT", "BINANCE:XRPUSDT", "BINANCE:ADAUSDT",
-	"BINANCE:DOGEUSDT", "BINANCE:MATICUSDT", "BINANCE:LTCUSDT",
-	"BINANCE:DOTUSDT",
+var AvailableTickers = []*domain.TickerInfo{
+	{Symbol: utils.BTCUSDTTickerTye},
+	{Symbol: utils.ETHUSDTTickerType},
+	{Symbol: utils.SOLUSDTTickerType},
+	{Symbol: utils.DOGEUSDTTickerType},
+	{Symbol: utils.BNBUSDTTickerType},
+	{Symbol: utils.LTCUSDTTickerType},
 }
 
-var latestPrices = make(map[string]*domain.TickerInfo)
-var prevPrices = make(map[string]float64)
-
-var mu sync.RWMutex
-
-func UpdatePrice(ticker string, price float64, ts int64) (bool, *domain.TickerInfo) {
-	mu.Lock()
-	defer mu.Unlock()
-
-	// if there is no update in price, skip it
-	old, exists := latestPrices[ticker]
-	if exists && old.Price == price {
-		return false, &domain.TickerInfo{}
-	}
-
-	// for storing the old prices
-	if exists {
-		prevPrices[ticker] = old.Price
-	}
-
-	updatedTicker := &domain.TickerInfo{
-		Ticker:    ticker,
-		Price:     price,
-		Timestamp: ts,
-	}
-
-	latestPrices[ticker] = updatedTicker
-	return true, updatedTicker
+func GetInitialTickers() []*domain.TickerInfo {
+	return AvailableTickers
 }
 
-func GetAllPrices() []*domain.TickerInfo {
-	mu.RLock()
-	defer mu.RUnlock()
+var liveTickers = make(map[string]*domain.TickerInfo)
+var mutex sync.Mutex
 
-	var res []*domain.TickerInfo
-	for _, t := range Tickers {
-		if val, ok := latestPrices[t]; ok {
-			res = append(res, val)
+func StartLiveTickerConnection() (*websocket.Conn, error) {
+	tickerSymbols := ""
+
+	for i, ticker := range AvailableTickers {
+		if i == len(AvailableTickers)-1 {
+			tickerSymbols += strings.ToLower(ticker.Symbol) + "@trade"
+		} else {
+			tickerSymbols += strings.ToLower(ticker.Symbol) + "@trade/"
+		}
+	}
+
+	websocketUrl := fmt.Sprintf(utils.BinanceWebsocketURL, tickerSymbols)
+
+	connection, _, err := websocket.DefaultDialer.Dial(websocketUrl, nil)
+	if err != nil {
+		log.Println("[StartLiveTickerConnection] websocket dial error:", err)
+		return nil, err
+	}
+
+	go func() {
+		defer connection.Close()
+
+		for {
+			_, msg, err := connection.ReadMessage()
+			if err != nil {
+				log.Println("[StartLiveTickerConnection] websocket read error:", err)
+				continue
+			}
+
+			var trade responses.TickerMessage
+			if err := json.Unmarshal(msg, &trade); err != nil {
+				log.Println("[StartLiveTickerConnection] unmarshal error:", err)
+				continue
+			}
+
+			if trade.Data == nil {
+				log.Println("[StartLiveTickerConnection] received nil data in the websocket stream:", string(msg))
+				continue
+			}
+
+			mutex.Lock()
+			liveTickers[trade.Data.S] = &domain.TickerInfo{
+				Symbol: trade.Data.S,
+				Price:  trade.Data.P,
+			}
+			mutex.Unlock()
+		}
+	}()
+
+	return connection, nil
+}
+
+// Fetch all current live tickers
+func GetLiveTickers() []*domain.TickerInfo {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	res := make([]*domain.TickerInfo, 0, len(AvailableTickers))
+	for _, t := range AvailableTickers {
+		if live, ok := liveTickers[t.Symbol]; ok {
+			res = append(res, live)
+		} else {
+			// if we don't have live data yet, send initial ticker info
+			res = append(res, t)
 		}
 	}
 
 	return res
-}
-
-func GetPrevPrices(ticker string) (float64, bool) {
-	mu.RLock()
-	defer mu.RUnlock()
-
-	val, ok := prevPrices[ticker]
-	return val, ok
 }
