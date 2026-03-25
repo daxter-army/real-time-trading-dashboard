@@ -81,7 +81,7 @@ const useDashboardScreen = (): useDashboardScreenProps => {
         );
 
         setTickerData(newMap);
-    }, [])
+    }, [isTabVisible])
 
     useEffect(() => {
         if (!wsConnection || tickerIsLoading) return;
