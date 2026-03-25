@@ -58,6 +58,7 @@ const useVisualization = (): useVisualizationProps => {
         )
 
         if (!ticker || !data?.length) return
+        const totalNumberOfEntries = data.length
 
         const price = Number(ticker.price)
         const now = Date.now()
@@ -86,11 +87,11 @@ const useVisualization = (): useVisualizationProps => {
             volume: 0
         })
 
-        // keep only latest 288 entries
-        const sliced = data.slice(-288)
+        // keep only latest totalNumberOfEntries (i.e 288 entires of 5min intervals as of now) entries
+        const sliced = data.slice(-totalNumberOfEntries)
 
         setData([...sliced])
-    }, [selectedTicker, data, setData])
+    }, [selectedTicker, data, setData, isTabVisible])
 
     // subscribe to live ticker updates
     useEffect(() => {
