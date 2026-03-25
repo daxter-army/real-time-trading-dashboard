@@ -64,7 +64,7 @@ This is the overall architecture of the application
 1. **Frontend**: React.JS (`react`) is used and packages like `react-router-dom`, `zustand`, `react-apexcharts`, `tailwind`, `react-icons` etc are also used. Please visit [`package.json`](https://github.com/daxter-army/real-time-trading-dashboard/blob/main/frontend/package.json) for full list.
 2. **Backend**: It is built with Golang and uses 2 external packages: `github.com/gorilla/websocket` and `github.com/joho/godotenv`. Please visit [`go.mod`](https://github.com/daxter-army/real-time-trading-dashboard/blob/main/backend/go.mod) for full list.
 
-### Project structure
+### 🔨 Project structure
 1. Backend directory strcuture is like this:
 ```sh
 backend/
@@ -100,18 +100,18 @@ frontend/
 ├── ...and other setup files
 ```
 
-### How to run this project locally?
-#### With `docker`
-##### Prerequisite
+### ⚡️ How to run this project locally?
+#### 🐳 With `docker`
+##### 📋 Prerequisite
 For this step docker should be installed on your machine. I have prepared this at docker version `29.3.0`
-##### Local setup
+##### 💻 Local setup
 1. Open terminal at project's base dir, and then hit `docker compose up --build`
 2. Open browser and navigate to `http://localhost:3000`, the app should be there to welcome you 🎉.
 
-#### Without `docker`
-##### Prerequisite
+#### 🐳 Without `docker`
+##### 📋 Prerequisite
 For this step Node.js `20.X` and golang `1.25` should be installed on your machine.
-##### Local setup
+##### 💻 Local setup
 1. Fork `git@github.com:daxter-army/real-time-trading-dashboard.git` in your machine.
 2. Open terminal 1 at `/backend` dir and terminal 2 at `/frontend` dir.
 3. In `/backend`, there would be a file named `.sample.env`, rename that to `.env` (I did'nt commit `.env` because we may have to use api secret in `.env` and then it would already have been in our git history).
