@@ -1,5 +1,5 @@
-import { Fragment } from "react"
-import { Navigate } from "react-router-dom"
+import { Fragment, useEffect } from "react"
+import { Navigate, useNavigate } from "react-router-dom"
 
 import Ticker from "@/components/Ticker/Ticker"
 import Visualization from "@/components/Visualization/Visualization"
@@ -14,10 +14,13 @@ import type { DashboardScreenProps } from "./DashboardScreen.props"
 
 const DashboardScreen = ({ }: DashboardScreenProps) => {
     // login checks
+    const navigate = useNavigate()
     const isLoggedIn = useAuthStore(state => state.isLoggedIn);
-    if (!isLoggedIn) {
-        return <Navigate to={APP_ROUTES.LOGIN_SCREEN} replace />
-    }
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate(APP_ROUTES.LOGIN_SCREEN, { replace: true })
+        }
+    }, [isLoggedIn, navigate])
 
     const {
         tickerData,
@@ -35,7 +38,7 @@ const DashboardScreen = ({ }: DashboardScreenProps) => {
         />
         {
             selectedTicker && <main>
-                <Visualization symbol={selectedTicker} />
+                <Visualization />
             </main>
         }
     </Fragment>
