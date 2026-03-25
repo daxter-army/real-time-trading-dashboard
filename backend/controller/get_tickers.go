@@ -38,9 +38,9 @@ func GetLiveTickers(w http.ResponseWriter, r *http.Request) {
 	tickerSymbols := ""
 	for i, ticker := range store.AvailableTickers {
 		if i == len(store.AvailableTickers) {
-			tickerSymbols += ticker.Symbol + "@trade"
+			tickerSymbols += ticker.Symbol.String() + "@trade"
 		} else {
-			tickerSymbols += ticker.Symbol + "@trade/"
+			tickerSymbols += ticker.Symbol.String() + "@trade/"
 		}
 	}
 

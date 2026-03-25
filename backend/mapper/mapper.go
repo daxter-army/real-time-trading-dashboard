@@ -16,7 +16,7 @@ func ToGetTickerResponse(rawData []*domain.TickerInfo) []*responses.TickerDTO {
 		}
 
 		response = append(response, &responses.TickerDTO{
-			Symbol: item.Symbol,
+			Symbol: item.Symbol.String(),
 			Price:  item.Price,
 		})
 	}

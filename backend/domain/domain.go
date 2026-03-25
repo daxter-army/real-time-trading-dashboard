@@ -1,8 +1,10 @@
 package domain
 
+import "realtime-trading-be/utils"
+
 type TickerInfo struct {
 	Price  string
-	Symbol string
+	Symbol utils.TickerType
 }
 
 type TickerHistory struct {

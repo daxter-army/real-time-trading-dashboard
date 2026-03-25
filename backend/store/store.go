@@ -15,19 +15,19 @@ import (
 )
 
 var AvailableTickers = []*domain.TickerInfo{
-	{Symbol: utils.BTCUSDTTickerTye},
-	{Symbol: utils.ETHUSDTTickerType},
-	{Symbol: utils.SOLUSDTTickerType},
-	{Symbol: utils.DOGEUSDTTickerType},
-	{Symbol: utils.BNBUSDTTickerType},
-	{Symbol: utils.LTCUSDTTickerType},
+	{Symbol: utils.TickerTypeBTCUSDT},
+	{Symbol: utils.TickerTypeETHUSDT},
+	{Symbol: utils.TickerTypeSOLUSDT},
+	{Symbol: utils.TickerTypeDOGEUSDT},
+	{Symbol: utils.TickerTypeBNBUSDT},
+	{Symbol: utils.TickerTypeLTCUSDT},
 }
 
 func GetInitialTickers() []*domain.TickerInfo {
 	return AvailableTickers
 }
 
-var liveTickers = make(map[string]*domain.TickerInfo)
+var liveTickers = make(map[utils.TickerType]*domain.TickerInfo)
 var mutex sync.Mutex
 
 func StartLiveTickerConnection() (*websocket.Conn, error) {
@@ -35,9 +35,9 @@ func StartLiveTickerConnection() (*websocket.Conn, error) {
 
 	for i, ticker := range AvailableTickers {
 		if i == len(AvailableTickers)-1 {
-			tickerSymbols += strings.ToLower(ticker.Symbol) + "@trade"
+			tickerSymbols += strings.ToLower(ticker.Symbol.String()) + "@trade"
 		} else {
-			tickerSymbols += strings.ToLower(ticker.Symbol) + "@trade/"
+			tickerSymbols += strings.ToLower(ticker.Symbol.String()) + "@trade/"
 		}
 	}
 
@@ -71,8 +71,8 @@ func StartLiveTickerConnection() (*websocket.Conn, error) {
 			}
 
 			mutex.Lock()
-			liveTickers[trade.Data.S] = &domain.TickerInfo{
-				Symbol: trade.Data.S,
+			liveTickers[utils.TickerType(trade.Data.S)] = &domain.TickerInfo{
+				Symbol: utils.TickerType(trade.Data.S),
 				Price:  trade.Data.P,
 			}
 			mutex.Unlock()
