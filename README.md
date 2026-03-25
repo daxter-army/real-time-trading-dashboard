@@ -45,6 +45,7 @@ This is the overall architecture of the application
 * The app is responsive.
 * `useState` (for local) and `Zustand` (for global) state is used at appropriate places.
 * User auth state is stored in the `localStorage` and whenever the app reloads, it extracts the value from there, stores in the global Zustand state, and from there it is served in the app.
+* If the tab is not focused, then we don't update the UI from the websocket stream data.
 
 ### 🌟 Bonus features
 * Login authentication (mocked)
