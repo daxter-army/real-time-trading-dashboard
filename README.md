@@ -109,7 +109,7 @@ For this step docker should be installed on your machine. I have prepared this a
 
 #### Without `docker`
 ##### Prerequisite
-For this step Node.js 20.X and golang 1.25 should be installed on your machine.
+For this step Node.js `20.X` and golang `1.25` should be installed on your machine.
 ##### Local setup
 1. Fork `git@github.com:daxter-army/real-time-trading-dashboard.git` in your machine.
 2. Open terminal 1 at `/backend` dir and terminal 2 at `/frontend` dir.
