@@ -21,6 +21,11 @@ export const STATICS = {
     LOGIN_MANDATE: "Please login to view dashboard"
 }
 
+export const WEBSOCKET_EVENTS = {
+    TICKER_UPDATE: "ticker:update",
+    ALERT_TRIGGER: "alert:trigger"
+}
+
 export const LOCAL_STORAGE_KEYS = {
     USER_LOGGED_IN: "my-rtd-user-logged-in"
 }
@@ -31,3 +36,5 @@ export const APP_ROUTES = {
     LOGIN_SCREEN: "/login",
     DASHBOARD_SCREEN: "/dashboard",
 }
+
+export const TICKER_LOADER_SKELETON_QTY = 6
