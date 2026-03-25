@@ -14,11 +14,14 @@ const Ticker = ({ data, isLoading, onTickerClickHandler, selectedSymbol }: Ticke
                     return <button
                         key={item.symbol}
                         onClick={() => onTickerClickHandler(item.symbol)}
-                        className={clsx("p-2 font-bold border border-[#95a5a6] rounded-sm cursor-pointer items-center flex flex-1 gap-2 hover:border-[#3498db]", { 'border-[#3498db] bg-[#3498db] text-white': selectedSymbol === item.symbol })}>
+                        className={clsx(
+                            "p-2 font-bold border border-[#95a5a6] rounded-sm cursor-pointer items-center flex flex-1 gap-2 hover:border-[#3498db]",
+                            { 'border-[#3498db] bg-[#3498db] text-white': selectedSymbol === item.symbol })
+                        }>
                         {item.symbol}
                         {
-                            item.price.length === 0
-                                ? <Skeleton customClassNames="w-18 h-5" />
+                            !item.price.length
+                                ? <Skeleton customClassNames="w-full h-5" />
                                 : <span className="font-normal">{Number(item.price).toFixed(2)}</span>
                         }
                     </button>
