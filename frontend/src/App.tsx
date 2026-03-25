@@ -5,7 +5,7 @@ import Header from '@/components/Header/Header';
 import LoginScreen from '@/screens/LoginScreen/LoginScreen';
 import DashboardScreen from '@/screens/DashboardScreen/DashboardScreen';
 
-import { useAppStore } from './store/app';
+import { useAppStore } from '@/store/app';
 
 import { APP_ROUTES } from '@/constants/constants';
 
