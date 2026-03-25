@@ -48,6 +48,7 @@ This is the overall architecture of the application
 
 ### 🌟 Bonus features
 * Login authentication (mocked)
+* Dockerize the whole application
 
 ### 🛞 Trade-offs/Assumptions
 * I haven’t used polling anywhere in this project because it doesn’t fit the use case for real-time updates. Instead, I have used:
@@ -101,7 +102,7 @@ frontend/
 ### How to run this project locally?
 #### Without `docker`
 ##### Prerequisite
-For this step Node.js 20.X and golang 1.2X should be installed on your machine.
+For this step Node.js 20.X and golang 1.25 should be installed on your machine.
 ##### Local setup
 1. Fork `git@github.com:daxter-army/real-time-trading-dashboard.git` in your machine.
 2. Open terminal 1 at `/backend` dir and terminal 2 at `/frontend` dir.
@@ -112,7 +113,9 @@ For this step Node.js 20.X and golang 1.2X should be installed on your machine.
 7. This will start our frontend app's server at **port:5173**
 8. Then navigate to `http://localhost:5173` and the app should be there to welcome you 🎉.
 
-<!-- #### With `docker`
+#### With `docker`
 ##### Prerequisite
-For this step docker (cli) should be installed on your machine.
-##### Local setup -->
+For this step docker should be installed on your machine. I have prepared this this at docker version `29.3.0`
+##### Local setup
+1. Open terminal at project's base dir, and then hit `docker compose up --build`
+2. Open browser and navigate to `http://localhost:3000`, the app should be there to welcome you 🎉.
