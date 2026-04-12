@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// this converts http request to websocket connection
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
@@ -33,16 +34,6 @@ func GetLiveTickers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer conn.Close()
-
-	// create a str of all available tickers
-	tickerSymbols := ""
-	for i, ticker := range store.AvailableTickers {
-		if i == len(store.AvailableTickers) {
-			tickerSymbols += ticker.Symbol.String() + "@trade"
-		} else {
-			tickerSymbols += ticker.Symbol.String() + "@trade/"
-		}
-	}
 
 	// check client disconnects
 	go func() {

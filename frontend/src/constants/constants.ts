@@ -7,23 +7,12 @@ export const API_SUB_PATHS = {
     PERIODIC_HISTORY: "/history/get"
 }
 
-export const HISTORY_PERIOD_1D = "1D"
-export const HISTORY_PERIOD_5D = "5D"
-
-export const CHART_TYPE_LINE = "line"
-export const CHART_TYPE_CANDLE = "candlestick"
-
 export const STATICS = {
     LOGIN: "login",
     CLOSING_PRICE: "closing price",
     APP_TITLE: "My trading dashboard",
     LOGIN_MANDATE: "Please login to view dashboard",
     ERROR_TITLE: "Error while loading! Please try again",
-}
-
-export const WEBSOCKET_EVENTS = {
-    TICKER_UPDATE: "ticker:update",
-    ALERT_TRIGGER: "alert:trigger"
 }
 
 export const LOCAL_STORAGE_KEYS = {
@@ -37,4 +26,19 @@ export const APP_ROUTES = {
     DASHBOARD_SCREEN: "/dashboard",
 }
 
-export const TICKER_LOADER_SKELETON_QTY = 6
+export const TICKER_LOADER_SKELETON_QTY = 6;
+
+export const WEBSOCKET_EVENTS = {
+    TICKER_UPDATE: "ticker:update",
+    ALERT_TRIGGER: "alert:trigger"
+} as const;
+
+export const CHART_TYPES = {
+    LINE: "line",
+    CANDLESTICK: "candlestick"
+} as const;
+
+export const HISTORY_PERIOD = {
+    "1D": "1D",
+    "5D": "5D"
+} as const;

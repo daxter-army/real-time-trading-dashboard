@@ -16,6 +16,7 @@ const DashboardScreen = ({ }: DashboardScreenProps) => {
     // login checks
     const navigate = useNavigate()
     const isLoggedIn = useAuthStore(state => state.isLoggedIn);
+
     useEffect(() => {
         if (!isLoggedIn) {
             navigate(APP_ROUTES.LOGIN_SCREEN, { replace: true })

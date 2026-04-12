@@ -5,25 +5,29 @@ import useFetch from "./useFetch";
 import { useAppStore } from "@/store/app";
 import { useWSStore } from "@/store/websocket";
 
-import { API_SUB_PATHS, CHART_TYPE_LINE, HISTORY_PERIOD_1D, HTTP_BASE_PATH, WEBSOCKET_EVENTS } from "@/constants/constants";
+import { API_SUB_PATHS, HISTORY_PERIOD, HTTP_BASE_PATH, CHART_TYPES, WEBSOCKET_EVENTS } from "@/constants/constants";
 
-type useVisualizationProps = {
+import type { CHART_TYPE, HISTORY_PERIOD_TYPE } from "@/types/types";
+
+type useVisualizationProps = () => {
     selectedTicker: string,
-    chartData: any[],
+    chartData: HistoryApiResponseItem[],
     chartError: Error | null,
     chartIsLoading: boolean,
-    chartPeriod: string,
-    chartType: "line" | "candlestick",
-    onChartPeriodClickHandler: (dataPeriod: string) => void,
-    onChartTypeClickHandler: (toggledChartType: "line" | "candlestick") => void,
+    chartType: CHART_TYPE,
+    chartPeriod: HISTORY_PERIOD_TYPE,
+    onChartTypeClickHandler: (toggledChartType: CHART_TYPE) => void,
+    onChartPeriodClickHandler: (dataPeriod: HISTORY_PERIOD_TYPE) => void,
 }
 
-const useVisualization = (): useVisualizationProps => {
-    const wsConnection = useWSStore(state => state.socket)
+const useVisualization: useVisualizationProps = () => {
+    const isWSConnected = useWSStore(state => state.isConnected)
+    const addEventListenerWS = useWSStore(state => state.addEventListener)
+    const removeEventListenerWS = useWSStore(state => state.removeEventListener)
     const selectedTicker = useAppStore(state => state.selectedTicker)
 
-    const [chartPeriod, setChartPeriod] = useState(HISTORY_PERIOD_1D)
-    const [chartType, setChartType] = useState<"line" | "candlestick">(CHART_TYPE_LINE)
+    const [chartPeriod, setChartPeriod] = useState<HISTORY_PERIOD_TYPE>(HISTORY_PERIOD["1D"])
+    const [chartType, setChartType] = useState<CHART_TYPE>(CHART_TYPES.LINE)
 
     const queryParams = new URLSearchParams({
         symbol: selectedTicker!,
@@ -34,75 +38,83 @@ const useVisualization = (): useVisualizationProps => {
         setData,
         loading,
         error,
-    } = useFetch(HTTP_BASE_PATH + API_SUB_PATHS.PERIODIC_HISTORY + "?" + queryParams, [], (result: any) => {
-        return result
-    })
+    } = useFetch<HistoryApiResponseItem[], HistoryApiResponseItem[]>(
+        `${HTTP_BASE_PATH}${API_SUB_PATHS.PERIODIC_HISTORY}?${queryParams}`,
+        [],
+        (result) => result
+    )
 
-    const onChartPeriodClickHandler = (dataPeriod: string) => {
+    const onChartPeriodClickHandler = (dataPeriod: HISTORY_PERIOD_TYPE) => {
         setChartPeriod(dataPeriod)
     }
 
-    const onChartTypeClickHandler = (toggledChartType: "line" | "candlestick") => {
+    const onChartTypeClickHandler = (toggledChartType: CHART_TYPE) => {
         setChartType(toggledChartType)
     }
 
     const onLiveTickerUpdateHandler = useCallback((event: MessageEvent) => {
-        const message = JSON.parse(event.data)
+        const message: WebsockerMessageType = JSON.parse(event.data)
         if (message.type !== WEBSOCKET_EVENTS.TICKER_UPDATE) return
 
         const ticker = message.data?.find(
-            (t: any) => t.symbol === selectedTicker
+            (t) => t.symbol === selectedTicker
         )
 
-        if (!ticker || !data?.length) return
-        const totalNumberOfEntries = data.length
+        if (!ticker) return
 
-        const price = Number(ticker.price)
-        const now = Date.now()
+        setData(prevData => {
+            if (!prevData?.length) return prevData
 
-        const last = data[data.length - 1]
-        const ONE_MIN = 60 * 1000
+            const totalNumberOfEntries = prevData.length
 
-        // update last candle
-        if (now - last.time < ONE_MIN) {
-            last.close = price
-            last.high = Math.max(last.high, price)
-            last.low = Math.min(last.low, price)
+            const price = Number(ticker.price)
+            const now = Date.now()
 
-            // trigger rerender
-            setData([...data])
-            return
-        }
+            const last = prevData[totalNumberOfEntries - 1]
+            const FIVE_MIN = 5 * 60 * 1000
 
-        // append new candle
-        data.push({
-            time: now,
-            open: last.close,
-            high: price,
-            low: price,
-            close: price,
-            volume: 0
+            let newData = []
+            if (now - last.time < FIVE_MIN) {
+                // update last candle
+                newData = [...prevData]
+                const updatedLast = { ...last }
+
+                updatedLast.close = price
+                updatedLast.high = Math.max(last.high, price)
+                updatedLast.low = Math.min(last.low, price)
+
+                newData[newData.length - 1] = updatedLast
+            } else {
+                // append new candle
+                newData = [...prevData, {
+                    time: now,
+                    open: last.close,
+                    high: price,
+                    low: price,
+                    close: price,
+                    volume: 0
+                }]
+
+                newData = newData.slice(-totalNumberOfEntries)
+            }
+
+            return newData
         })
-
-        // keep only latest totalNumberOfEntries (i.e 288 entires of 5min intervals as of now) entries
-        const sliced = data.slice(-totalNumberOfEntries)
-
-        setData([...sliced])
-    }, [selectedTicker, data, setData])
+    }, [selectedTicker])
 
     // subscribe to live ticker updates
     useEffect(() => {
-        if (!wsConnection || chartPeriod !== HISTORY_PERIOD_1D) return
+        if (!isWSConnected || chartPeriod !== HISTORY_PERIOD["1D"]) return
 
-        wsConnection.addEventListener("message", onLiveTickerUpdateHandler)
+        addEventListenerWS("message", onLiveTickerUpdateHandler)
         return () => {
-            wsConnection.removeEventListener("message", onLiveTickerUpdateHandler)
+            removeEventListenerWS("message", onLiveTickerUpdateHandler)
         }
-    }, [wsConnection, onLiveTickerUpdateHandler, chartPeriod])
+    }, [isWSConnected, onLiveTickerUpdateHandler, chartPeriod])
 
     return {
-        selectedTicker: selectedTicker!,
-        chartData: data,
+        selectedTicker: selectedTicker,
+        chartData: data != null ? data : [],
         chartError: error,
         chartType: chartType,
         chartIsLoading: loading,

@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import Chart from "react-apexcharts"
+import { type ApexOptions } from "apexcharts";
 
 import useVisualization from "@/hooks/useVisualization";
 
@@ -7,9 +8,9 @@ import ChartError from "./ChartError/ChartError";
 import ChartHeader from "./ChartHeader/ChartHeader";
 import ChartLoader from "./ChartLoader/ChartLoader";
 
-import { CHART_TYPE_CANDLE } from "@/constants/constants"
-
 import type { VisualizationProps } from "./Visualization.props"
+
+import { CHART_TYPES } from "@/constants/constants";
 
 const Visualization = ({ }: VisualizationProps) => {
     const {
@@ -44,7 +45,7 @@ const Visualization = ({ }: VisualizationProps) => {
 
     // last point for annotation
     const lastPoint = lineSeries[lineSeries.length - 1]
-    const options = useMemo(
+    const options: ApexOptions = useMemo(
         () => ({
             chart: {
                 type: chartType,
@@ -110,20 +111,13 @@ const Visualization = ({ }: VisualizationProps) => {
     )
 
     const series = useMemo(() => {
-        return chartType === CHART_TYPE_CANDLE ?
-            [
-                {
-                    name: "Price",
-                    data: candleSeries
-                }
-            ]
-            : [
-                {
-                    name: "Price",
-                    data: lineSeries
-                }
-            ]
-    }, [chartType, lineSeries, candleSeries, lastPoint])
+        return [
+            {
+                name: "Price",
+                data: chartType === CHART_TYPES.LINE ? lineSeries : candleSeries
+            }
+        ]
+    }, [chartType, lineSeries, candleSeries])
 
     return chartError
         ? <ChartError />
@@ -142,7 +136,6 @@ const Visualization = ({ }: VisualizationProps) => {
                     key={chartType}
                     series={series}
                     type={chartType}
-                    // @ts-ignore
                     options={options}
                 />
             </div>

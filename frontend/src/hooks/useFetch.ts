@@ -1,7 +1,33 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-const useFetch = <T = any>(url: string, defaultData: any = null, dataUpdateHandler: (result: any) => T | null, options?: RequestInit) => {
-    const [data, setData] = useState<T | null>(defaultData);
+// This is TS's limitation we can't use generics inside the function when not using inline definitions
+// type UseFetchReturnProps = <T, ApiResponse>(
+//     url: string,
+//     defaultData: T | null,
+//     dataUpdateHandler: (result: ApiResponse) => T | null,
+//     options?: RequestInit
+// ) => {
+//     data: T | null,
+//     setData: React.Dispatch<React.SetStateAction<T | null>>,
+//     error: Error | null,
+//     loading: boolean,
+//     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+//     refetch: () => Promise<void>,
+// }
+
+const useFetch = <T, ApiResponse>(
+    url: string,
+    defaultData: T | null = null,
+    dataUpdateHandler: (result: ApiResponse) => T | null,
+    options?: RequestInit): {
+        data: T | null,
+        setData: React.Dispatch<React.SetStateAction<T | null>>,
+        error: Error | null,
+        loading: boolean,
+        setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+        refetch: () => Promise<void>,
+    } => {
+    const [data, setData] = useState(defaultData);
     const [error, setError] = useState<Error | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -28,13 +54,13 @@ const useFetch = <T = any>(url: string, defaultData: any = null, dataUpdateHandl
                 );
             }
 
-            const result = await response.json();
+            const result = await response.json() as ApiResponse;
             const transformedData = dataUpdateHandler(result);
 
             setData(transformedData);
 
-        } catch (err: any) {
-            if (err.name !== "AbortError") {
+        } catch (err) {
+            if (err instanceof Error && err.name !== "AbortError") {
                 setError(err);
             }
         } finally {

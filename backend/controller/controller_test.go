@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetTickersHandler(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/tickers", nil)
+	req := httptest.NewRequest("GET", "/tickers/get", nil)
 	rr := httptest.NewRecorder()
 
 	GetTickers(rr, req)

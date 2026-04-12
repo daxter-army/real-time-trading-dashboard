@@ -11,19 +11,21 @@ import {
     WEBSOCKET_EVENTS,
 } from "@/constants/constants"
 
-type useDashboardScreenProps = {
-    tickerData: any,
-    selectedTicker: any,
-    tickerIsLoading: any,
+type UseDashboardScreenProps = () => {
+    tickerData: TickerResponseItem[],
+    selectedTicker: string,
+    tickerIsLoading: boolean,
     onTickerClickHandler: (symbol: string) => void
 }
 
-const useDashboardScreen = (): useDashboardScreenProps => {
+const useDashboardScreen: UseDashboardScreenProps = () => {
     // websocket connection setup
     // only establish connection when the dashboard actually loads
     // not on <App /> load, because we dont need this data on <LoginScreen />, save network bandwidth also, reduce load on the server etc
     const connectWS = useWSStore(state => state.connect)
-    const wsConnection = useWSStore(state => state.socket)
+    const isWSConnected = useWSStore(state => state.isConnected)
+    const addEventListenerWS = useWSStore(state => state.addEventListener)
+    const removeEventListenerWS = useWSStore(state => state.removeEventListener)
     const disconnectWS = useWSStore(state => state.disconnect)
 
     useEffect(() => {
@@ -39,13 +41,11 @@ const useDashboardScreen = (): useDashboardScreenProps => {
         data: tickerData,
         setData: setTickerData,
         loading: tickerIsLoading,
-    } = useFetch(
-        `${HTTP_BASE_PATH}${API_SUB_PATHS.STATIC_TICKERS}`,
-        new Map(),
+    } = useFetch<Map<string, TickerResponseItem>, TickerResponseItem[]>(`${HTTP_BASE_PATH}${API_SUB_PATHS.STATIC_TICKERS}`, new Map<string, TickerResponseItem>(),
         (result) => {
-            const newMap = new Map()
+            const newMap = new Map<string, TickerResponseItem>()
 
-            result.forEach((element: any) => {
+            result.forEach((element) => {
                 newMap.set(element.symbol, element)
             });
 
@@ -66,12 +66,12 @@ const useDashboardScreen = (): useDashboardScreenProps => {
 
     // handler to update data on each message received from the websocket connection
     const onLiveTickerUpdateHandler = useCallback((event: MessageEvent) => {
-        const message = JSON.parse(event.data);
+        const message: WebsockerMessageType = JSON.parse(event.data);
 
         if (message.type !== WEBSOCKET_EVENTS.TICKER_UPDATE) return;
 
         const newMap = new Map(
-            message.data.map((ticker: any) => [
+            message.data.map((ticker) => [
                 ticker.symbol,
                 ticker
             ])
@@ -81,17 +81,16 @@ const useDashboardScreen = (): useDashboardScreenProps => {
     }, [])
 
     useEffect(() => {
-        if (!wsConnection || tickerIsLoading) return;
+        if (!isWSConnected) return;
 
-        wsConnection.addEventListener("message", onLiveTickerUpdateHandler);
+        addEventListenerWS("message", onLiveTickerUpdateHandler);
         return () => {
-            wsConnection.removeEventListener("message", onLiveTickerUpdateHandler);
+            removeEventListenerWS("message", onLiveTickerUpdateHandler);
         };
-
-    }, [wsConnection, tickerIsLoading, onLiveTickerUpdateHandler]);
+    }, [isWSConnected, onLiveTickerUpdateHandler]);
 
     return {
-        tickerData,
+        tickerData: tickerData != null ? Array.from(tickerData.values()) : [],
         selectedTicker,
         tickerIsLoading,
         onTickerClickHandler

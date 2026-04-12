@@ -1,6 +1,6 @@
 export type TickerProps = {
-    data: any[]
+    data: TickerResponseItem[]
     isLoading: boolean
-    selectedSymbol: string | null
+    selectedSymbol: string
     onTickerClickHandler: (symbol: string) => void
 }

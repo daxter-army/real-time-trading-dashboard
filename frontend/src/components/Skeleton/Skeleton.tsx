@@ -6,4 +6,4 @@ const Skeleton = ({ customClassNames = '' }: SkeletonProps) => {
     return <div className={clsx('animate-pulse bg-gray-300 rounded', customClassNames)} />
 }
 
-export default Skeleton
+export default Skeleton;

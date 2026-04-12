@@ -1,12 +1,12 @@
 import { create } from "zustand"
 
 type AppStore = {
-    selectedTicker: string | null,
+    selectedTicker: string,
     setSelectedTicker: (ticker: string) => void,
 }
 
 export const useAppStore = create<AppStore>((set) => ({
-    selectedTicker: null,
+    selectedTicker: "",
     setSelectedTicker: (ticker: string) => {
         set({ selectedTicker: ticker })
     }

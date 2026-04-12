@@ -10,7 +10,7 @@ const Ticker = ({ data, isLoading, onTickerClickHandler, selectedSymbol }: Ticke
         {
             isLoading
                 ? <TickerLoader />
-                : Array.from(data.values()).map(item => {
+                : data.map(item => {
                     return <button
                         key={item.symbol}
                         onClick={() => onTickerClickHandler(item.symbol)}

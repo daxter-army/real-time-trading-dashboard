@@ -37,7 +37,7 @@ This is the overall architecture of the application
 * There are 2 http api and 1 ws api:
     * `/tickers/get` -> fetches the available Tickers (static list).
     * `/history/get` -> fetches the historical data for a ticker with specified period (1D/5D etc) and limit of data points.
-    * `ws/ticker/get` -> this starts a webocket connection between our frontend and backend client and it steams the latest ticker price fetched from the Binance ticker websocket connection.
+    * `ws/ticker/get` -> this starts a webocket connection between our frontend and backend client and it streams the latest ticker price fetched from the Binance ticker websocket connection.
 * This project is fully typed (Typescript) use.
 * Production grade practices(coding conventions, folder structures, FE/BE arch) for `frontend` and as well as `backend` directories are used.
 * No mocked financial data is used, real data coming from Binance apis is shown on our dashboard.
@@ -108,7 +108,7 @@ For this step docker should be installed on your machine. I have prepared this a
 1. Open terminal at project's base dir, and then hit `docker compose up --build`
 2. Open browser and navigate to `http://localhost:3000`, the app should be there to welcome you 🎉.
 
-#### 🐳 Without `docker`
+#### Without `docker`
 ##### 📋 Prerequisite
 For this step Node.js `20.X` and golang `1.25` should be installed on your machine.
 ##### 💻 Local setup
@@ -120,3 +120,6 @@ For this step Node.js `20.X` and golang `1.25` should be installed on your machi
 6. In terminal 2, hit: `npm i && npm run dev`
 7. This will start our frontend app's server at **port:5173**
 8. Then navigate to `http://localhost:5173` and the app should be there to welcome you 🎉.
+
+### 🧪 Running `tests`
+`tests` have been defined scope/sub-directory wise. You can run `go test dir_name -v`. e.g `go test ./controller -v`
